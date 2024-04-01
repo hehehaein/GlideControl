@@ -53,18 +53,18 @@ def run_glide_finetune(
     os.makedirs(checkpoints_dir, exist_ok=True)
 
     # Start wandb logging
-    wandb_run = wandb_setup(
-        batch_size=batch_size,
-        side_x=side_x,
-        side_y=side_y,
-        learning_rate=learning_rate,
-        use_fp16=use_fp16,
-        device=device,
-        data_dir=data_dir,
-        base_dir=checkpoints_dir,
-        project_name=project_name,
-    )
-    print("Wandb setup.")
+    # wandb_run = wandb_setup(
+    #     batch_size=batch_size,
+    #     side_x=side_x,
+    #     side_y=side_y,
+    #     learning_rate=learning_rate,
+    #     use_fp16=use_fp16,
+    #     device=device,
+    #     data_dir=data_dir,
+    #     base_dir=checkpoints_dir,
+    #     project_name=project_name,
+    # )
+    # print("Wandb setup.")
 
     # Model setup
     glide_model, glide_diffusion, glide_options = load_model(
@@ -171,32 +171,11 @@ def parse_args():
     parser.add_argument("--adam_weight_decay", "-adam_wd", type=float, default=0.0)
     parser.add_argument("--side_x", "-x", type=int, default=64)
     parser.add_argument("--side_y", "-y", type=int, default=64)
-    parser.add_argument(
-        "--resize_ratio", "-crop", type=float, default=0.8, help="Crop ratio"
-    )
-    parser.add_argument(
-        "--uncond_p",
-        "-p",
-        type=float,
-        default=0.2,
-        help="Probability of using the empty/unconditional token instead of a caption. OpenAI used 0.2 for their finetune.",
-    )
-    parser.add_argument(
-        "--train_upsample",
-        "-upsample",
-        action="store_true",
-        help="Train the upsampling type of the model instead of the base model.",
-    )
-    parser.add_argument(
-        "--resume_ckpt",
-        "-resume",
-        type=str,
-        default="",
-        help="Checkpoint to resume from",
-    )
-    parser.add_argument(
-        "--checkpoints_dir", "-ckpt", type=str, default="./glide_checkpoints/"
-    )
+    parser.add_argument("--resize_ratio", "-crop", type=float, default=0.8, help="Crop ratio")
+    parser.add_argument("--uncond_p","-p",type=float,default=0.2,help="Probability of using the empty/unconditional token instead of a caption. OpenAI used 0.2 for their finetune.")
+    parser.add_argument("--train_upsample","-upsample",action="store_true",help="Train the upsampling type of the model instead of the base model.")
+    parser.add_argument("--resume_ckpt","-resume",type=str,default="",help="Checkpoint to resume from")
+    parser.add_argument("--checkpoints_dir", "-ckpt", type=str, default="./glide_checkpoints/")
     parser.add_argument("--use_fp16", "-fp16", action="store_true")
     parser.add_argument("--device", "-dev", type=str, default="")
     parser.add_argument("--log_frequency", "-freq", type=int, default=100)
@@ -206,63 +185,16 @@ def parse_args():
     parser.add_argument("--activation_checkpointing", "-grad_ckpt", action="store_true")
     parser.add_argument("--use_captions", "-txt", action="store_true")
     parser.add_argument("--epochs", "-epochs", type=int, default=20)
-    parser.add_argument(
-        "--test_prompt",
-        "-prompt",
-        type=str,
-        default="a group of skiers are preparing to ski down a mountain.",
-    )
-    parser.add_argument(
-        "--test_batch_size",
-        "-tbs",
-        type=int,
-        default=1,
-        help="Batch size used for model eval, not training.",
-    )
-    parser.add_argument(
-        "--test_guidance_scale",
-        "-tgs",
-        type=float,
-        default=1.0,
-        help="Guidance scale used during model eval, not training.",
-    )
-    parser.add_argument(
-        "--use_webdataset",
-        "-wds",
-        action="store_true",
-        help="Enables webdataset (tar) loading",
-    )
-    parser.add_argument(
-        "--wds_image_key",
-        "-wds_img",
-        type=str,
-        default="jpg",
-        help="A 'key' e.g. 'jpg' used to access the image in the webdataset",
-    )
-    parser.add_argument(
-        "--wds_caption_key",
-        "-wds_cap",
-        type=str,
-        default="txt",
-        help="A 'key' e.g. 'txt' used to access the caption in the webdataset",
-    )
-    parser.add_argument(
-        "--wds_dataset_name",
-        "-wds_name",
-        type=str,
-        default="laion",
-        help="Name of the webdataset to use (laion or alamy)",
-    )
+    parser.add_argument("--test_prompt","-prompt",type=str,default="a group of skiers are preparing to ski down a mountain.")
+    parser.add_argument("--test_batch_size","-tbs",type=int,default=1,help="Batch size used for model eval, not training.")
+    parser.add_argument("--test_guidance_scale","-tgs",type=float,default=1.0,help="Guidance scale used during model eval, not training.")
+    parser.add_argument("--use_webdataset","-wds",action="store_true",help="Enables webdataset (tar) loading")
+    parser.add_argument("--wds_image_key","-wds_img",type=str,default="jpg",help="A 'key' e.g. 'jpg' used to access the image in the webdataset")
+    parser.add_argument("--wds_caption_key","-wds_cap",type=str,default="txt",help="A 'key' e.g. 'txt' used to access the caption in the webdataset")
+    parser.add_argument("--wds_dataset_name","-wds_name",type=str,default="laion",help="Name of the webdataset to use (laion or alamy)")
     parser.add_argument("--seed", "-seed", type=int, default=0)
-    parser.add_argument(
-        "--cudnn_benchmark",
-        "-cudnn",
-        action="store_true",
-        help="Enable cudnn benchmarking. May improve performance. (may not)",
-    )
-    parser.add_argument(
-        "--upscale_factor", "-upscale", type=int, default=4, help="Upscale factor for training the upsampling model only"
-    )
+    parser.add_argument("--cudnn_benchmark","-cudnn",action="store_true",help="Enable cudnn benchmarking. May improve performance. (may not)")
+    parser.add_argument("--upscale_factor", "-upscale", type=int, default=4, help="Upscale factor for training the upsampling model only")
     parser.add_argument("--image_to_upsample", "-lowres", type=str, default="low_res_face.png")
     args = parser.parse_args()
 
